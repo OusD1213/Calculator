@@ -1,45 +1,38 @@
 let displayText = document.getElementById("display");
 const allBtns = document.querySelectorAll("button");
 let operator;
-let secondOperator;
-let initialVal;
+let initialVal = "";
+let currentVal = "";
 
-
-// fix udefined and null
-//fix do all operation seperately 
 allBtns.forEach((btn) =>
   btn.addEventListener("click", () => {
     const buttonText = btn.textContent;
-    let finalVal;
-    if (
-      buttonText === "+" ||
-      buttonText === "-" ||
-      buttonText === "*" ||
-      buttonText === "/"
-    ) {
-      initialVal = displayText.textContent;
-      operator = buttonText;
-      displayText.textContent = "";
-    } else if (buttonText === "=") {
-        finalVal = displayText.textContent;
-      if (typeof initialVal === "undefined" || typeof finalVal === "undefined" || typeof operator === "undefined") {
-        displayText.textContent = "Error";
+
+    if (buttonText === "+" || buttonText === "-" || buttonText === "*" || buttonText === "/") {
+      if (operator && currentVal) {
+        initialVal = operate(operator, parseFloat(initialVal), parseFloat(currentVal));
+        displayText.textContent = initialVal;
       } else {
-        console.log(finalVal);
-        console.log(operator);
-        console.log(initialVal);
-        displayText.textContent = operate(
-          operator,
-          parseFloat(initialVal),
-          parseFloat(finalVal)
-        );
+        initialVal = currentVal;
+      }
+      currentVal = "";
+      operator = buttonText;
+      displayText.textContent += " " + operator +" ";
+    } else if (buttonText === "=") {
+      if (operator && currentVal) {
+        initialVal = operate(operator, parseFloat(initialVal), parseFloat(currentVal));
+        displayText.textContent = initialVal;
+        currentVal = "";
+        operator = "";
       }
     } else if (buttonText === "CLEAR") {
       displayText.textContent = "";
-      operator = null;
-      initialVal = null;
+      operator = "";
+      initialVal = "";
+      currentVal = "";
     } else {
-      displayText.textContent += btn.textContent;
+      currentVal += buttonText;
+      displayText.textContent += buttonText;
     }
   })
 );
@@ -64,18 +57,14 @@ function operate(operator, num1, num2) {
   switch (operator) {
     case "+":
       return add(num1, num2);
-      break;
     case "-":
       return subtract(num1, num2);
-      break;
     case "*":
       return mult(num1, num2);
-      break;
     case "/":
       return div(num1, num2);
-      break;
     default:
-      console.log("No operation provide");
+      console.log("No operation provided");
       return null;
   }
 }
